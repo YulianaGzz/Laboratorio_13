@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda de Contactos</title>
+</head>
+<body>
+
+    <h1>Agenda de Contactos</h1>
+
+    <a href="/nuevo">Agregar Contacto</a>
+
+    <br><br>
+
+    <!-- Mensaje si no hay contactos -->
+    <p th:if="${#lists.isEmpty(contactos)}">
+        No hay contactos registrados.
+    </p>
+
+    <!-- Tabla si existen contactos -->
+    <table border="1" th:unless="${#lists.isEmpty(contactos)}">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="c : ${contactos}">
+                <td th:text="${c.nombre}"></td>
+                <td th:text="${c.apellido}"></td>
+                <td th:text="${c.email}"></td>
+                <td th:text="${c.telefono}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
