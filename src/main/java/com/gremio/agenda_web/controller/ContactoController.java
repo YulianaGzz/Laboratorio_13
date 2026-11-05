@@ -1,41 +1,57 @@
 package com.gremio.agenda_web.controller;
 
 import com.gremio.agenda_web.model.Contacto;
-import com.gremio.agenda_web.repository.ContactoRepository;
+import com.gremio.service.ContactoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ContactoController {
 
-    private final ContactoRepository repo;
+    private final ContactoService service;
 
-    // Spring inyecta el repository automáticamente
-    public ContactoController(ContactoRepository repo) {
-        this.repo = repo;
+    public ContactoController(ContactoService service) {
+        this.service = service;
     }
 
-    // GET /contactos → muestra la lista
     @GetMapping("/contactos")
     public String listar(Model model) {
-        model.addAttribute("contactos", repo.findAll());
+        model.addAttribute("contactos", service.listarTodos());
         return "contactos";
     }
 
-    // GET /nuevo → muestra el formulario vacío
     @GetMapping("/nuevo")
-    public String formulario(Model model) {
+    public String formularioNuevo(Model model) {
         model.addAttribute("contacto", new Contacto());
-        return "nuevo";
+        return "formulario";
     }
 
-    // POST /guardar → recibe el formulario y guarda en BD
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Contacto contacto) {
-        repo.save(contacto);
+        service.guardar(contacto);
+        return "redirect:/contactos";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String formularioEditar(@PathVariable Long id, Model model) {
+        model.addAttribute("contacto",
+                service.buscarPorId(id));
+        return "formulario";
+    }
+
+    @PostMapping("/actualizar")
+    public String actualizar(@ModelAttribute Contacto contacto) {
+        service.guardar(contacto);
+        return "redirect:/contactos";
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable Long id) {
+        service.eliminar(id);
         return "redirect:/contactos";
     }
 }
